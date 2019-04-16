@@ -5130,16 +5130,6 @@ react-is@^16.8.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.8.6.tgz#5bbc1e2d29141c9fbdfed456343fe2bc430a6a16"
   integrity sha512-aUk3bHfZ2bRSVFFbbeVS4i+lNPZr3/WM5jT2J5omUVV1zzcs1nAaf3l51ctA5FFvCRbhrH0bdAsRRQddFJZPtA==
 
-react-native-drag-sort@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/react-native-drag-sort/-/react-native-drag-sort-1.1.0.tgz#820929be60ee430fe05fb29d96061132f7531a0a"
-  integrity sha512-QJ+NtyDf261pPUtNI6jv1R7TzuZCSQ0jxtkit4iNu/yd8Xpt7Df4HTVvNz1GKU4U2yct5Qw6F1dDeqMlNW77HQ==
-
-react-native-draggable-flatlist@^1.1.7:
-  version "1.1.7"
-  resolved "https://registry.yarnpkg.com/react-native-draggable-flatlist/-/react-native-draggable-flatlist-1.1.7.tgz#d15cd84cfa924c8733114cb9d3324a5bdbcd7ec2"
-  integrity sha512-HBYYfbDbf7iRuEnSPUfh7iyGltwqLe3OokYI2d6aWY+OUEPEnd9bmTBu8LISQag+9W91/sqKsp8fRAZtnVIsNg==
-
 react-native-draggable-view@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/react-native-draggable-view/-/react-native-draggable-view-0.0.6.tgz#770aa6e0f6514b5920b7624eb7f9bb0b92368d4d"

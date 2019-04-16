@@ -1,129 +1,144 @@
-import React from 'react';
-import {View, Text, StyleSheet, Animated, Dimensions, PanResponder, TouchableOpacity } from 'react-native';
+import React, { Component } from 'react'
+import { Text, View, Alert, TouchableOpacity, Dimensions, Animated, Easing, StyleSheet } from 'react-native'
 import SwipeOut from "react-native-swipeout";
 import { Icon } from "native-base";
 
 const {width} = Dimensions.get('window');
 
-export default class SwipeListAtom extends React.PureComponent {
+export default class SwipeListAtom extends Component {
   constructor(props) {
     super(props);
-
-    this.gestureDelay = -35;
-    this.scrollViewEnabled = true;
-
-    const position = new Animated.ValueXY();
-    const panResponder = PanResponder.create({
-      onStartShouldSetPanResponder: (evt, gestureState) => false,
-      onMoveShouldSetPanResponder: (evt, gestureState) => true,
-      onPanResponderTerminationRequest: (evt, gestureState) => false,
-      onPanResponderMove: (evt, gestureState) => {
-        if (gestureState.dx > 35) {
-          this.setScrollViewEnabled(false);
-          let newX = gestureState.dx + this.gestureDelay;
-          position.setValue({x: newX, y: 0});
-        }
-      },
-      onPanResponderRelease: (evt, gestureState) => {
-        if (gestureState.dx < 150) {
-          Animated.timing(this.state.position, {
-            toValue: {x: 0, y: 0},
-            duration: 150,
-          }).start(() => {
-            this.setScrollViewEnabled(true);
-          });
-        } else {
-          Animated.timing(this.state.position, {
-            toValue: {x: width, y: 0},
-            duration: 300,
-          }).start(() => {
-            this.props.success(this.props.text);
-            this.setScrollViewEnabled(true);
-          });
-        }
-      },
-    });
-
-    this.panResponder = panResponder;
-    this.state = {position, close: false};
-  }
-
-  setScrollViewEnabled = (enabled) => {
-    if (this.scrollViewEnabled !== enabled) {
-      this.props.setScrollEnabled(enabled);
-      this.scrollViewEnabled = enabled;
+    this.state = {
+      close: false
     }
   }
 
   render() {
-    const swipeoutBtns = [
-        {
-            component: (
-                <TouchableOpacity style={{ 
-                    backgroundColor: 'red', 
-                    alignItems: 'center', 
-                    justifyContent: 'center',
-                    height: 80
-                }}
-                onPress={()=> {
-                    alert('Button Clicked!!!');
-                    this.setState({ close: true })
-                }}
-                >
-                    <Icon type={"EvilIcons"} name="trash" style={{ color: '#FFF', padding:21 }} />
-                </TouchableOpacity>
-            )
-        }
-    ];
-      
+   const {data, first} = this.props;
+   const swipeoutBtns = [
+      {
+          component: (
+              <TouchableOpacity style={{ 
+                  backgroundColor: 'red',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: 55
+              }}
+              onPress={()=> {
+                  Alert.alert(
+                      'Hello Customer',
+                      'Are you sure you want to cancel this booking?',
+                      [
+                        {
+                          text: 'No',
+                          onPress: () => this.setState({ close: true }),
+                          style: 'cancel',
+                        },
+                        {text: 'Yes', onPress: () => {
+                            this.props.remove(data.key)
+                        }},
+                      ],
+                      { cancelable: false }
+                    );
+              }}
+              >
+                  <Text style={{ color: '#FFF', fontSize: 8 }}>CANCEL</Text>
+                  <Text style={{ color: '#FFF', fontSize: 8 }}>BOOKING</Text>
+              </TouchableOpacity>
+          )
+      }
+  ];
+
     return (
-      <SwipeOut 
-      style={[styles.listItem, { backgroundColor: this.props.backgroundColor }]}
-      right={swipeoutBtns}
-      autoClose={true}
-      close={this.state.close}
-      onOpen={()=> this.setState({ close: false })}
-      >
-        <TouchableOpacity
-        onLongPress={this.props.onLongPress}
-        onPressOut={this.props.onPressOut}
-        style={{ height: 80, justifyContent: 'center', paddingLeft: 21 }}
-        >
-            <Text style={{ color: this.props.isActive ? 'transparent' : '#000' }}>
-              {this.props.label}
-            </Text>
-        </TouchableOpacity>
-      </SwipeOut>
+      <View style={[
+        styles.row
+      ]}>
+          <SwipeOut 
+          style={[{ flex: 1, backgroundColor: (first.toString() === data.key) ? '#FFF' : '#FFF' }]}
+          left={swipeoutBtns}
+          autoClose={true}
+          close={this.state.close}
+          onOpen={()=> this.setState({ close: false })}
+          buttonWidth={50}
+          >
+              <TouchableOpacity
+              onPress={()=>this.props.onLongPress(data.key)}
+              style={{ height: 55, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 21 }}
+              >
+                  <View style={{ flex: .2 }}>
+                      <View style={{ 
+                          backgroundColor: '#5F9EA0', 
+                          height: 45, 
+                          width: 45, 
+                          borderRadius: 22,
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                      }}>
+                          <Text style={{ color: '#FFF' }}>{data.proName.charAt(0)}</Text>
+                      </View>
+                  </View>
+                  <View style={{ flex: .5, justifyContent: 'space-between', height: 50 }}>
+                      <View>
+                          <Text style={{ fontSize: 10, color: (first.toString() === data.key)   ?  '#000' : '#000' }}>
+                              {data.proName.substring(0,20)}
+                          </Text>
+                          <Text style={{ fontWeight: '200', fontSize: 8, color: (first.toString() === data.key)   ?  '#000' : '#000' }}>
+                              {data.category}
+                          </Text>
+                      </View>
+                      <View style={{ flexDirection: 'row', }}>
+                          <Icon 
+                          name="md-call"
+                          style={{ fontSize: 18, color: (first.toString() === data.key)   ? '#000' : '#828282', }}
+                          onPress={()=>{
+                              Alert.alert(
+                                  'Call Customer',
+                                  '+2347062951438',
+                                  [
+                                    {
+                                      text: 'No',
+                                      onPress: () => this.setState({ close: true }),
+                                      style: 'cancel',
+                                    },
+                                    {text: 'Yes', onPress: () => {
+                                          this.setState({ close: true })
+                                    }},
+                                  ],
+                                  { cancelable: false },
+                                );
+                          }}
+                          />
+                          <Icon 
+                          type={'Entypo'}
+                          name="chat"
+                          style={{ marginLeft: 63, fontSize: 16, color: (first.toString() === data.key)   ? '#000' : '#828282', }}
+                          onPress={()=>console.log('Chat clicked')}
+                          />
+                      </View>
+                  </View>
+                  <View style={{ flex: .3 }}>
+                      <Text style={{ textAlign: 'right', fontSize: 10, color: (first.toString() === data.key)   ?  '#BE64FF' : '#000' }}>
+                          {data.status}
+                      </Text>
+                  </View>
+              </TouchableOpacity>
+          </SwipeOut>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-    listItem: {
-      height: 80,
-      justifyContent: 'center',
-      backgroundColor: '#BE64FF',
-    },
-    absoluteCell: {
-      position: 'absolute',
-      top: 0,
-      bottom: 0,
-      left: 0,
-      width: 100,
-      flexDirection: 'row',
-      justifyContent: 'flex-end',
-      alignItems: 'center',
-    },
-    absoluteCellText: {
-      margin: 16,
-      color: '#FFF',
-    },
-    innerCell: {
-      width: width,
-      height: 80,
-      marginLeft: 100,
-      backgroundColor: 'yellow',
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-  });
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'center',
+    backgroundColor: '#fff',
+    padding: 0,
+    height: 55,
+    flex: 1,
+    marginTop: 0,
+    marginBottom: 0,
+    width: width
+  }
+});
